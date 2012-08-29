@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jbehave.pankaj</groupId>
+  <artifactId>jbehave-training</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>JBehave Stories</name>
+<profiles>
+	<profile>
+		<id>test</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<properties>
+			<embeddables>**/*Stories.java</embeddables>
+			<meta.filter>+author *.*</meta.filter>
+		</properties>
+	</profile>
+		<profile>
+		<id>no-test</id>
+		<activation>
+			<activeByDefault>false</activeByDefault>
+		</activation>
+		<properties>
+			<embeddables>***/no.java</embeddables>
+		</properties>
+	</profile>
+
+</profiles>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jbehave</groupId>
+      <artifactId>jbehave-spring</artifactId>
+      <version>3.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jbehave</groupId>
+      <artifactId>jbehave-core</artifactId>
+      <version>3.5</version>
+      <classifier>resources</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jbehave.site</groupId>
+      <artifactId>jbehave-site-resources</artifactId>
+      <version>3.1.1</version>
+      <type>zip</type>
+    </dependency>
+   
+    
+<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>2.19.0</version>
+</dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/storynavigator</directory>
+        <targetPath>${project.build.directory}/jbehave/view</targetPath>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+        </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jbehave</groupId>
+        <artifactId>jbehave-maven-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+          <execution>
+            <id>unpack-view-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack-view-resources</goal>
+            </goals>
+          </execution>          
+          <execution>
+            <id>embeddable-stories</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <includes>
+                <include>**/*Stories.java</include>
+              </includes>
+               <metaFilters>
+                <!--  <metaFilter>${meta.filter}</metaFilter>-->
+              </metaFilters>
+              <excludes />
+              <generateViewAfterStories>true</generateViewAfterStories>
+              <ignoreFailureInStories>true</ignoreFailureInStories>
+              <ignoreFailureInView>true</ignoreFailureInView>
+            </configuration>
+            <goals>
+              <goal>run-stories-as-embeddables</goal>
+            </goals>
+          </execution>
+        <execution>
+            <id>map-stories</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <includes>
+                <include>**/*Maps.java</include>
+              </includes>
+              <metaFilters>
+                <metaFilter>${meta.filter}</metaFilter>
+              </metaFilters>
+            </configuration>
+            <goals>
+              <goal>map-stories-as-embeddables</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report-stepdocs</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <includes>
+                <include>${embeddables}</include>
+              </includes>
+            </configuration>
+            <goals>
+              <goal>report-stepdocs-as-embeddables</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
